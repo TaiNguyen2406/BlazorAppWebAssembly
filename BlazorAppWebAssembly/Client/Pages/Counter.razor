@@ -1,16 +1,37 @@
 ﻿@page "/counter"
+@inject IJSRuntime JsRuntime;
 
 <h1>Counter</h1>
 
 <p>Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
+<button class="btn btn-danger" @onclick="OnYes">Yes!</button>
+<br />
+<p>@message</p>
 @code {
     private int currentCount = 0;
+    private string message;
+    private int yesCount = 0;
 
     private void IncrementCount()
     {
         currentCount++;
+    }
+    private async Task OnYes()
+    {
+        //JsRuntime.InvokeVoidAsync("alert", "Are you sure?");
+        bool confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure?");
+        if (confirmed)
+        {
+            yesCount++;
+            await JsRuntime.InvokeVoidAsync("alert", "You are dead!");
+        }
+        message = "Yes button is clicked!";
+        if (yesCount > 1)
+        {
+            message += $" ({yesCount})";
+        }
+        Console.WriteLine("Yes button is clicked!");
     }
 }
